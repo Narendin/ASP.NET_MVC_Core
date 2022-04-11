@@ -13,7 +13,17 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = this;
 
-        new Thread(() => RunFibonachi(100, textBox))
+        var thread = new Thread(() => RunFibonachi(100, textBox))
+        {
+            IsBackground = true
+        };
+        thread.Start();
+
+        new Thread(() =>
+        {
+            Thread.Sleep(15000);
+            thread.Interrupt();
+        })
         {
             IsBackground = true
         }.Start();
@@ -74,5 +84,10 @@ public partial class MainWindow : Window
             return n % 2 == 0 ? -result : result;
         else
             return result;
+    }
+
+    private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        sleepTime = (int)e.NewValue;
     }
 }
